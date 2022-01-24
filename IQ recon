@@ -1,0 +1,392 @@
+Seg 01:
+
+with raw_data as (
+	SELECT cps.email_address, cpc.pref_updated_at as cpc_updated_at, cps.preference_updated_by as cps_updated_by
+	FROM customerview.dev.cps_primary_13012022 as cps
+	JOIN customerview.dev.cpc_mongodb_13012022 as cpc
+	ON trim(lower(cps.email_address)) = trim(lower(cpc.email_address))
+	AND cps.preference_key = cpc.pref_key
+	AND cpc.pref_key = 'indicative-quotes'
+	WHERE preference_key = 'indicative-quotes'
+	AND lower(cps.preference_value) = 'true'
+	AND cpc.pref_value = 'true'
+	group by 1,2,3),	
+exc_rec_upd as (
+	SELECT count(distinct trim(lower(r.email_address))) as num_exc
+	FROM raw_data as r
+	WHERE r.cpc_updated_at<'2022-01-13'
+	AND lower(r.cps_updated_by) not in ('account-closure-service', 'gdpr-deletions')
+),
+agg as (
+	select count(distinct trim(lower(r.email_address))) as num
+	from raw_data as r)
+
+select
+'indicative-quotes' as claim,
+'SEG 01' as segment,
+'CPS TRUE CPC TRUE' as description,
+a.num as number_records,
+xu.num_exc as number_exc_recent_updates,
+'None' as risk,
+'MISMATCH - missing for marketing' as comment
+FROM agg as a, exc_rec_upd as xu;
+
+Seg 02:
+
+with raw_data as (
+	SELECT cps.email_address, cpc.pref_updated_at as cpc_updated_at, cps.preference_updated_by as cps_updated_by
+	FROM customerview.dev.cps_primary_13012022 as cps
+	JOIN customerview.dev.cpc_mongodb_13012022 as cpc
+	ON trim(lower(cps.email_address)) = trim(lower(cpc.email_address))
+	AND cps.preference_key = cpc.pref_key
+	AND cpc.pref_key = 'indicative-quotes'
+	WHERE preference_key = 'indicative-quotes'
+	AND lower(cps.preference_value) = 'false'
+	AND cpc.pref_value = 'true'
+	group by 1,2,3),	
+exc_rec_upd as (
+	SELECT count(distinct trim(lower(r.email_address))) as num_exc
+	FROM raw_data as r
+	WHERE r.cpc_updated_at<'2022-01-13'
+	AND lower(r.cps_updated_by) not in ('account-closure-service', 'gdpr-deletions')
+),
+agg as (
+	select count(distinct trim(lower(r.email_address))) as num
+	from raw_data as r)
+
+select
+'indicative-quotes' as claim,
+'SEG 02' as segment,
+'CPS FALSE CPC TRUE' as description,
+a.num as number_records,
+xu.num_exc as number_exc_recent_updates,
+'None' as risk,
+'MISMATCH - missing for marketing' as comment
+FROM agg as a, exc_rec_upd as xu;
+
+
+
+Seg 03: 
+
+with raw_data as (
+	SELECT cps.email_address, cpc.pref_updated_at as cpc_updated_at, cps.preference_updated_by as cps_updated_by
+	FROM customerview.dev.cps_primary_13012022 as cps
+	JOIN customerview.dev.cpc_mongodb_13012022 as cpc
+	ON trim(lower(cps.email_address)) = trim(lower(cpc.email_address))
+	AND cps.preference_key = cpc.pref_key
+	AND cpc.pref_key = 'indicative-quotes'
+	WHERE preference_key = 'indicative-quotes'
+	AND cps.preference_value is NULL
+	AND cpc.pref_value = 'true'
+	group by 1,2,3),	
+exc_rec_upd as (
+	SELECT count(distinct trim(lower(r.email_address))) as num_exc
+	FROM raw_data as r
+	WHERE r.cpc_updated_at<'2022-01-13'
+	AND lower(r.cps_updated_by) not in ('account-closure-service', 'gdpr-deletions')
+),
+agg as (
+	select count(distinct trim(lower(r.email_address))) as num
+	from raw_data as r)
+
+select
+'indicative-quotes' as claim,
+'SEG 03' as segment,
+'CPS NULL CPC TRUE' as description,
+a.num as number_records,
+xu.num_exc as number_exc_recent_updates,
+'None' as risk,
+'MISMATCH - missing for marketing' as comment
+FROM agg as a, exc_rec_upd as xu;
+
+
+
+Seg 04: 
+
+with raw_data as (
+	SELECT cps.email_address, cpc.pref_updated_at as cpc_updated_at, cps.preference_updated_by as cps_updated_by
+	FROM customerview.dev.cps_primary_13012022 as cps
+	JOIN customerview.dev.cpc_mongodb_13012022 as cpc
+	ON trim(lower(cps.email_address)) = trim(lower(cpc.email_address))
+	AND cps.preference_key = cpc.pref_key
+	AND cpc.pref_key = 'indicative-quotes'
+	WHERE preference_key = 'indicative-quotes'
+	AND trim(lower(cps.email_address)) is NULL
+	AND cpc.pref_value = 'true'
+	group by 1,2,3),	
+exc_rec_upd as (
+	SELECT count(distinct trim(lower(r.email_address))) as num_exc
+	FROM raw_data as r
+	WHERE r.cpc_updated_at<'2022-01-13'
+	AND lower(r.cps_updated_by) not in ('account-closure-service', 'gdpr-deletions')
+),
+agg as (
+	select count(distinct trim(lower(r.email_address))) as num
+	from raw_data as r)
+
+select
+'indicative-quotes' as claim,
+'SEG 04' as segment,
+'CPS MISSING CPC TRUE' as description,
+a.num as number_records,
+xu.num_exc as number_exc_recent_updates,
+'None' as risk,
+'MISMATCH - missing for marketing' as comment
+FROM agg as a, exc_rec_upd as xu;
+
+
+
+Seg 05: 
+
+with raw_data as (
+	SELECT cps.email_address, cpc.pref_updated_at as cpc_updated_at, cps.preference_updated_by as cps_updated_by
+	FROM customerview.dev.cps_primary_13012022 as cps
+	JOIN customerview.dev.cpc_mongodb_13012022 as cpc
+	ON trim(lower(cps.email_address)) = trim(lower(cpc.email_address))
+	AND cps.preference_key = cpc.pref_key
+	AND cpc.pref_key = 'indicative-quotes'
+	WHERE preference_key = 'indicative-quotes'
+	AND cps.preference_value = 'true'
+	AND cpc.pref_value = 'false'
+	group by 1,2,3),	
+exc_rec_upd as (
+	SELECT count(distinct trim(lower(r.email_address))) as num_exc
+	FROM raw_data as r
+	WHERE r.cpc_updated_at<'2022-01-13'
+	AND lower(r.cps_updated_by) not in ('account-closure-service', 'gdpr-deletions')
+),
+agg as (
+	select count(distinct trim(lower(r.email_address))) as num
+	from raw_data as r)
+
+select
+'indicative-quotes' as claim,
+'SEG 05' as segment,
+'CPS TRUE CPC FALSE' as description,
+a.num as number_records,
+xu.num_exc as number_exc_recent_updates,
+'High' as risk,
+'MISMATCH - Could market in error unless in suppression list' as comment
+FROM agg as a, exc_rec_upd as xu;
+
+
+
+Seg 06: 
+
+with raw_data as (
+	SELECT cps.email_address, cpc.pref_updated_at as cpc_updated_at, cps.preference_updated_by as cps_updated_by
+	FROM customerview.dev.cps_primary_13012022 as cps
+	JOIN customerview.dev.cpc_mongodb_13012022 as cpc
+	ON trim(lower(cps.email_address)) = trim(lower(cpc.email_address))
+	AND cps.preference_key = cpc.pref_key
+	AND cpc.pref_key = 'indicative-quotes'
+	WHERE preference_key = 'indicative-quotes'
+	AND cps.preference_value = 'false'
+	AND cpc.pref_value = 'false'
+	group by 1,2,3),	
+exc_rec_upd as (
+	SELECT count(distinct trim(lower(r.email_address))) as num_exc
+	FROM raw_data as r
+	WHERE r.cpc_updated_at<'2022-01-13'
+	AND lower(r.cps_updated_by) not in ('account-closure-service', 'gdpr-deletions')
+),
+agg as (
+	select count(distinct trim(lower(r.email_address))) as num
+	from raw_data as r)
+
+select
+'indicative-quotes' as claim,
+'SEG 06' as segment,
+'CPS FALSE CPC FALSE' as description,
+a.num as number_records,
+xu.num_exc as number_exc_recent_updates,
+'None' as risk,
+'Match' as comment
+FROM agg as a, exc_rec_upd as xu;
+
+
+
+Seg 07: 
+
+with raw_data as (
+	SELECT cps.email_address, cpc.pref_updated_at as cpc_updated_at, cps.preference_updated_by as cps_updated_by
+	FROM customerview.dev.cps_primary_13012022 as cps
+	JOIN customerview.dev.cpc_mongodb_13012022 as cpc
+	ON trim(lower(cps.email_address)) = trim(lower(cpc.email_address))
+	AND cps.preference_key = cpc.pref_key
+	AND cpc.pref_key = 'indicative-quotes'
+	WHERE preference_key = 'indicative-quotes'
+	AND cps.preference_value is NULL
+	AND cpc.pref_value = 'false'
+	group by 1,2,3),	
+exc_rec_upd as (
+	SELECT count(distinct trim(lower(r.email_address))) as num_exc
+	FROM raw_data as r
+	WHERE r.cpc_updated_at<'2022-01-13'
+	AND lower(r.cps_updated_by) not in ('account-closure-service', 'gdpr-deletions')
+),
+agg as (
+	select count(distinct trim(lower(r.email_address))) as num
+	from raw_data as r)
+
+select
+'indicative-quotes' as claim,
+'SEG 07' as segment,
+'CPS NULL CPC FALSE' as description,
+a.num as number_records,
+xu.num_exc as number_exc_recent_updates,
+'None' as risk,
+'Match' as comment
+FROM agg as a, exc_rec_upd as xu;
+
+
+
+
+
+Seg 08:
+
+with raw_data as (
+	SELECT cps.email_address, cpc.pref_updated_at as cpc_updated_at, cps.preference_updated_by as cps_updated_by
+	FROM customerview.dev.cps_primary_13012022 as cps
+	JOIN customerview.dev.cpc_mongodb_13012022 as cpc
+	ON trim(lower(cps.email_address)) = trim(lower(cpc.email_address))
+	AND cps.preference_key = cpc.pref_key
+	AND cpc.pref_key = 'indicative-quotes'
+	WHERE preference_key = 'indicative-quotes'
+	AND lower(trim(cps.email_address)) is NULL
+	AND cpc.pref_value = 'false'
+	group by 1,2,3),	
+exc_rec_upd as (
+	SELECT count(distinct trim(lower(r.email_address))) as num_exc
+	FROM raw_data as r
+	WHERE r.cpc_updated_at<'2022-01-13'
+	AND lower(r.cps_updated_by) not in ('account-closure-service', 'gdpr-deletions')
+),
+agg as (
+	select count(distinct trim(lower(r.email_address))) as num
+	from raw_data as r)
+
+select
+'indicative-quotes' as claim,
+'SEG 08' as segment,
+'CPS MISSING CPC FALSE' as description,
+a.num as number_records,
+xu.num_exc as number_exc_recent_updates,
+'Low' as risk,
+'MISMATCH - Will not cause problem' as comment
+FROM agg as a, exc_rec_upd as xu;
+
+
+
+Seg 09: 
+
+with raw_data as (
+	SELECT cps.email_address, cpc.pref_updated_at as cpc_updated_at, cps.preference_updated_by as cps_updated_by
+	FROM customerview.dev.cps_primary_13012022 as cps
+	JOIN customerview.dev.cpc_mongodb_13012022 as cpc
+	ON trim(lower(cps.email_address)) = trim(lower(cpc.email_address))
+	AND cps.preference_key = cpc.pref_key
+	AND cpc.pref_key = 'indicative-quotes'
+	WHERE preference_key = 'indicative-quotes'
+	AND cps.preference_value = 'true'
+	AND cpc.pref_value is NULL
+	group by 1,2,3),	
+exc_rec_upd as (
+	SELECT count(distinct trim(lower(r.email_address))) as num_exc
+	FROM raw_data as r
+	WHERE r.cpc_updated_at<'2022-01-13'
+	AND lower(r.cps_updated_by) not in ('account-closure-service', 'gdpr-deletions')
+),
+agg as (
+	select count(distinct trim(lower(r.email_address))) as num
+	from raw_data as r)
+
+select
+'indicative-quotes' as claim,
+'SEG 09' as segment,
+'CPS TRUE CPC NULL' as description,
+a.num as number_records,
+xu.num_exc as number_exc_recent_updates,
+'High' as risk,
+'MISMATCH - NULLs in CPC should not be possible' as comment
+FROM agg as a, exc_rec_upd as xu;
+
+
+
+Seg 10:
+
+with raw_data as (
+	SELECT cps.email_address, cpc.pref_updated_at as cpc_updated_at, cps.preference_updated_by as cps_updated_by
+	FROM customerview.dev.cps_primary_13012022 as cps
+	JOIN customerview.dev.cpc_mongodb_13012022 as cpc
+	ON trim(lower(cps.email_address)) = trim(lower(cpc.email_address))
+	AND cps.preference_key = cpc.pref_key
+	AND cpc.pref_key = 'indicative-quotes'
+	WHERE preference_key = 'indicative-quotes'
+	AND cps.preference_value = 'false'
+	AND cpc.pref_value is NULL
+	group by 1,2,3),	
+exc_rec_upd as (
+	SELECT count(distinct trim(lower(r.email_address))) as num_exc
+	FROM raw_data as r
+	WHERE r.cpc_updated_at<'2022-01-13'
+	AND lower(r.cps_updated_by) not in ('account-closure-service', 'gdpr-deletions')
+),
+agg as (
+	select count(distinct trim(lower(r.email_address))) as num
+	from raw_data as r)
+
+select
+'indicative-quotes' as claim,
+'SEG 10' as segment,
+'CPS FALSE CPC NULL' as description,
+a.num as number_records,
+xu.num_exc as number_exc_recent_updates,
+'Low' as risk,
+'MISMATCH - NULLs in CPC should not be possible' as comment
+FROM agg as a, exc_rec_upd as xu;
+
+
+
+
+
+Seg 11:
+
+with raw_data as (
+	SELECT cps.email_address, cpc.pref_updated_at as cpc_updated_at, cps.preference_updated_by as cps_updated_by
+	FROM customerview.dev.cps_primary_13012022 as cps
+	JOIN customerview.dev.cpc_mongodb_13012022 as cpc
+	ON trim(lower(cps.email_address)) = trim(lower(cpc.email_address))
+	AND cps.preference_key = cpc.pref_key
+	AND cpc.pref_key = 'indicative-quotes'
+	WHERE preference_key = 'indicative-quotes'
+	AND trim(lower(cps.email_address)) is Null
+	AND cpc.pref_value is NULL
+	group by 1,2,3),	
+exc_rec_upd as (
+	SELECT count(distinct trim(lower(r.email_address))) as num_exc
+	FROM raw_data as r
+	WHERE r.cpc_updated_at<'2022-01-13'
+	AND lower(r.cps_updated_by) not in ('account-closure-service', 'gdpr-deletions')
+),
+agg as (
+	select count(distinct trim(lower(r.email_address))) as num
+	from raw_data as r)
+
+select
+'indicative-quotes' as claim,
+'SEG 11' as segment,
+'CPS MISSING CPC NULL' as description,
+a.num as number_records,
+xu.num_exc as number_exc_recent_updates,
+'Low' as risk,
+'MISMATCH - NULLs in CPC should not be possible' as comment
+FROM agg as a, exc_rec_upd as xu;
+
+
+
+
+
+
+
+
