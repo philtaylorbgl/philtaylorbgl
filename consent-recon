@@ -362,17 +362,7 @@ WITH raw_data as (
     AND lower(r.cps_updated_by) not in ('account-closure-service','gdpr-deletions')
     AND r.email_address NOT IN 
     
-('e2f3c066d58af0a7db', 'ddbd9ee1da59e8cd', 'alan.nixon100@gmail.com', '730d61e706b53e024c8e5e9694', 'adeelsoni2003@yahoo.co.uk',
-'4b53c337e1f649175d0a2', 'f95c6b97685845a9116521f7f9e', 'a14f346f3d7af3acf931fd1', 'robert_koziolek@interia.eu', 'c97c99d81c080bfc6216b5d27fa8a84b',
-'7b213c43211210024aece7468a21', '2dfb6519cca1d6a6677', '8710f766596b7f65dfaba', 'e589fe0a65bcd562eef4f59288', 'c7df6e0e1f540d6d6b8e59493e',
-'4e425f04b16ecb802fcfe99c', 'd047043e37a80676b3dcd3d1', '31cf234f0e03af5f204', 'cdb40328c427d039e0', '8f28dcfb33b464650b00558',
-'a902419a058fc2fecd3cfa02b77', '9841a0ee545b26ff8fa2', 'b9e2d5fc8424b86f0b9b', '0a7ac5cb5e4c227a70426db', 'kaypink80@gmail.com',
-'allisonpiper2@gmail.com', '3368d4999b080d50289e06d9', '20c50fb1dd8da14b2a6f61d1a6df', 'd67b5ad3e3ee7edc5666b16',
-'f95e3f3bac9de9ccf77b9b94', '4c153ed4c91a240e6d92572267a57', '68739cad599235738fe2bce7bbad5e', '067ae423b84a299eb600e', '48e768bb39bc314cbdcb96df471265',
-'3d7bfb20a5447fb04a58', 'derrickscrivener@hotmail.co.uk', 'b2ae89008df32ee622e1521a','chris.pritchard52@googlemail.com', 'casadesalvia@yahoo.co.uk',
-'michal.kozlowski.81@wp.pl', 'sbmom23@msn.com', 'lyndasowler@aol.com','alanb3ce@gmail.com', 'royston.bentham@icloud.com',
-'jonathan.courtois@gmail.com', 'nat_nutty@hotmail.co.uk','clareleeks@hotmail.co.uk','nikkiecjbullen@gmail.com','orelldaly2@hotmail.co.uk',
-'szorospina@gmail.com','j.ratajczak2@gmail.com'
+(emails
 )
         
 ), agg as (
@@ -403,21 +393,7 @@ WITH raw_data as (
     AND lower(r.cps_updated_by) not in ('account-closure-service','gdpr-deletions')
     AND r.email_address NOT IN 
     
-('cabc6bac1981f3a4c1b7026294407', '7760a5434940a98806c', '2080cf2e78a75be1abc85e3833d', '70c213cd2190a3aade8cfd1b', '51ca6e170e1af014f4a0',
-'29f988af5430485daa4', '2bd709b333c202449a20717b7', '9684f6b89ca5b084b4f99375a0dfd9bd', 'fa7a4cdc722ecd7f8bf', '005ff7be5a6e58dec35d8a', '7a7e2abce9cad04e6a76',
-'0116e3e60d177b8ac86e31', 'a00df68f832ef4c3c50e0a', 'bf2d89246657b45', '68e7157ad2f088b35b5e80cd6a9ff14', '0d167fe15c921b5ef53a2f1b',
-'daa0fa019c35713ad0dc066dfa', '006dfec901903111066f70045fac', '7b9ca95e6f95256b6bd8', '4a81d3f7de94a44e9beed732d9614d2f', '0acd86f51dccd7866',
-'61b99de5b2c277c0e', '2b303a6406ed090aa5', '5e39422b70043741f1353eb2111e', 'ffac35ac44365a2bef1a78', 'd63fd197f699dec407849f', '29872431da114c700a',
-'9c901a1f0e7ed62687', 'e60b559c6f998906b6d', '0dbfbe2a97f398a0153fff48', '2073c26c5066758350e', 'fd4588076e63d0228573b1d92', '46443ec48bdbb608deb5aeaf413c4',
-'a04f46cf9a506a524ba0af6acc', 'fabc33545b6d7b214e9503b', '0bde49cf7ebf5e9a7ac73dfb1', '8493ed3e80e79ad4ce6bbfb48', '1520c12c29e523e2ace0',
-'148ebe3071734e6da0e586f', '8c32e04f4cce367698a940', 'f043b9d7df11309c7130c12e', 'ae21beca9f196dad3e16dcb', 'ac57fa7b7d866df6e13ce2',
-'03e127330d02c8cfcb038087', 'b27200d1d083f88dfd888a99528', '050ea558c44be3d7860d8bc50', 'fa451a54e648d7dc6d5f7313013e38cd', 'ad50c73e4343deb0c15f',
-'1851b01dc594293a04e1bf0', 'afeb857a6f4d9e67225f3fe4', 'aad41db58293a86435c25391956', '513eaccf712644a8153d', '6b056b352dc74041a51be267c846',
-'6f1d683dc8373f55b0', 'eba7cda3abe15ad29c34431dc9', 'fc5190dccd6d3cf5b3d0e2125a00', '8af166e36488d01e7059fcf2', '4451a6b97fd1154d63994f60b12',
-'5d027a32f9ed53e6ce2f1086', '0219e765804c27f6a8eb016e5efd0a3','jacquiblower@btinternet.com', 'nadia_ullah@hotmail.com', 'nadia_ullah12@hotmail.com',
-'scorchisme@gmail.com', 'wgibbons47@gmail.com', 'colletteparker@btinternet.com', 'leannewilliamsuk06@hotmail.co.uk', 'parnybear1994@hotmail.com', 'vivienne.chellis@ntlworld.com',
-'a.keyani@aigestates.com','nm5673@gmail.com','hayleyspenc@aol.com','thomas.gschwind@intergga.ch','kirstyfairfield@hotmail.com','kevin-taylor2007@hotmail.com'
-)
+(emails)
     
 ), agg as (
     select count(distinct trim(lower(r.email_address))) as num
