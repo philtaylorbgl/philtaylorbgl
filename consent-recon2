@@ -1,0 +1,140 @@
+
+
+—— update dates in ddmmyyyy format and yyyy-mm-dd format
+
+
+---SEG 05
+
+WITH raw_data as (
+SELECT cps.email_address,cpc.pref_updated_at as cpc_updated_at,cps.preference_updated_by as cps_updated_by
+FROM dev.cps_primary_filtered_13012022 cps
+JOIN dev.cpc_mongo_email_13012022 cpc
+ON trim(lower(cps.email_address))=trim(lower(cpc.email_address))
+WHERE lower(cps.preference_value)='true'
+AND cpc.pref_key='email'
+AND cpc.pref_value IS False
+AND cps.preference_key='email'
+GROUP BY 1,2,3
+)
+SELECT distinct r.email_address as email_address
+INTO dev.cps_seg05_13012022
+FROM raw_data r
+WHERE r.cpc_updated_at<'2022-01-13'
+AND lower(r.cps_updated_by) not in ('account-closure-service','gdpr-deletions');
+
+
+grant select on dev.cps_seg05_13012022 to group "gg-aws-ctm-data-prod-redshift-ldc-endusers";
+
+select distinct s5.email_address, vcps.preference_key, vcps.preference_value,vcps.preference_updated_at,vcps.preference_updated_by
+from dev.cps_seg05_13012022 s5
+join model.vw_customer_preferences_specified vcps on s5.email_address=lower(trim(vcps.email_address)) ;
+
+
+select email_address
+from dev.cps_seg05_13012022;
+
+---------
+
+---SEG 12
+
+
+WITH raw_data as (SELECT cps.email_address,cpc.pref_updated_at
+as cpc_updated_at,cps.preference_updated_by
+as cps_updated_by
+FROM dev.cps_primary_filtered_13012022 cps
+LEFT JOIN dev.cpc_mongo_email_13012022 cpc
+ON trim(lower(cps.email_address))=trim(lower(cpc.email_address))
+LEFT JOIN dim.email d
+ON trim(lower(cps.email_address))=trim(lower(d.email))
+WHERE d.errf_obfuscation_date IS NULL
+AND lower(cps.preference_value) = 'true'
+AND trim(lower(cpc.email_address)) is NULL
+GROUP BY 1,2,3)SELECT distinct r.email_address as email_address
+INTO dev.cps_seg12_13012022
+FROM raw_data r
+WHERE (r.cpc_updated_at<'2022-01-13' OR r.cpc_updated_at IS NULL)
+AND lower(r.cps_updated_by) not in ('account-closure-service','gdpr-deletions')
+AND r.email_address NOT IN 
+
+(-- add emails
+);
+
+
+
+select distinct s12.email_address, vcps.event_id, vcps.occurred_at, vcps.preference_key, vcps.preference_value,vcps.preference_updated_at,vcps.preference_updated_by
+from dev.cps_seg12_13012022 s12
+join model.customer_preferences_specified vcps
+on s12.email_address=lower(trim(vcps.email_address))
+--where s12.email_address = '31cf234f0e03af5f204'
+order by email_address, occurred_at desc;
+
+
+--**--
+
+
+—- record the emails in excel where prev email empty / null. record SEG 12
+select n.email_address new_email, p.email_address as prev_email
+from dev.cps_seg12_13012022 n
+full join dev.cps_seg12_30122021 p on n.email_address=p.email_address
+where new_email IS NOT NULL;
+
+
+---------
+---SEG 13
+
+
+WITH raw_data as (SELECT cps.email_address,cpc.pref_updated_at as cpc_updated_at,cps.preference_updated_by as cps_updated_by
+FROM dev.cps_primary_filtered_13012022 cps
+LEFT JOIN dev.cpc_mongo_email_13012022 cpc
+ON trim(lower(cps.email_address))=trim(lower(cpc.email_address))
+LEFT JOIN dim.email d
+ON trim(lower(cps.email_address))=trim(lower(d.email))
+WHERE d.errf_obfuscation_date IS NULL
+AND lower(cps.preference_value) = 'false'
+AND cpc.email_address is NULL
+GROUP BY 1,2,3)SELECT distinct r.email_address as email_address
+INTO dev.cps_seg13_13012022
+FROM raw_data r
+WHERE (r.cpc_updated_at<'2022-01-13'
+OR r.cpc_updated_at IS NULL)
+AND lower(r.cps_updated_by) not in ('account-closure-service','gdpr-deletions')
+AND r.email_address NOT IN 
+    
+(--add emails
+);
+
+select distinct s13.email_address, vcps.event_id, vcps.occurred_at, vcps.preference_key, vcps.preference_value,vcps.preference_updated_at,vcps.preference_updated_by
+from dev.cps_seg13_13012022 s13
+join model.customer_preferences_specified vcps
+on s13.email_address=lower(trim(vcps.email_address))
+order by email_address, occurred_at desc;
+
+—- record the emails in excel where prev email empty / null. record SEG 13
+select n.email_address new_email, p.email_address as prev_email
+from dev.cps_seg13_13012022 n
+full join dev.cps_seg13_30122021 p
+on n.email_address=p.email_address
+where new_email IS NOT NULL;
+
+
+—CHECKS TO RUN AFTER - put all potential emails for suppression into these queries. If emails are returned they don’t need to be sent for suppression
+
+SELECT event_id,occurred_at, email_address, preference_value,preference_updated_by 
+FROM model.customer_preferences_specified cps 
+WHERE email_address in 
+(
+--add emails
+)
+AND occurred_at>='2022-01-13'
+AND preference_key ='email';
+
+
+
+select distinct email_address, occurred_at from model.errf_deletion_processed_deletion_results
+where email_address in
+(
+--add emails
+);
+
+
+— through secure Email check proposed suppression list aligns
